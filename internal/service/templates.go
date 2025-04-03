@@ -6,29 +6,26 @@
 package service
 
 import (
-	"context"
-
-	"github.com/ledboot/OwlHook/internal/consts"
 	"github.com/ledboot/OwlHook/internal/model"
 )
 
 type (
-	INotify interface {
-		Send(ctx context.Context, platform consts.Platform, payload *model.Payload) error
+	ITemplate interface {
+		GetTemplate(platform string) (*model.SafeTemplate, error)
 	}
 )
 
 var (
-	localNotify INotify
+	localTemplate ITemplate
 )
 
-func Notify() INotify {
-	if localNotify == nil {
-		panic("implement not found for interface INotify, forgot register?")
+func Template() ITemplate {
+	if localTemplate == nil {
+		panic("implement not found for interface ITemplate, forgot register?")
 	}
-	return localNotify
+	return localTemplate
 }
 
-func RegisterNotify(i INotify) {
-	localNotify = i
+func RegisterTemplate(i ITemplate) {
+	localTemplate = i
 }

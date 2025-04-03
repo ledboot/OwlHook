@@ -1,15 +1,11 @@
 package notifiers
 
 import (
-	"bytes"
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
-	"time"
 
 	"github.com/ledboot/OwlHook/internal/model"
 )
@@ -43,8 +39,8 @@ func (n *DingTalkNotifier) generateSignature(timestamp int64) string {
 }
 
 // Send implements NotifierInterface
-func (n *DingTalkNotifier) Send(message *model.WebhookMessage) error {
-	text := GenerateAlertMessage(message)
+func (n *DingTalkNotifier) Send(ctx context.Context, payload *model.Payload) error {
+	/* text := GenerateAlertMessage(message)
 
 	dingMsg := &dingTalkMessage{
 		MsgType: "markdown",
@@ -84,7 +80,7 @@ func (n *DingTalkNotifier) Send(message *model.WebhookMessage) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("dingtalk API returned non-200 status code: %d", resp.StatusCode)
-	}
+	} */
 
-	return nil
+	return fmt.Errorf("not implemented")
 }

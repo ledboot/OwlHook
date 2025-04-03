@@ -10,21 +10,19 @@ import (
 	"github.com/ledboot/OwlHook/internal/logic/notifiers"
 )
 
-var (
-	Main = gcmd.Command{
-		Name:  "main",
-		Usage: "main",
-		Brief: "start http server",
-		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			s := g.Server()
+var Main = gcmd.Command{
+	Name:  "main",
+	Usage: "main",
+	Brief: "start http server",
+	Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+		s := g.Server()
 
-			notifiers.Init(ctx)
+		notifiers.Init(ctx)
 
-			root := s.Group("/")
-			root.Middleware(ghttp.MiddlewareHandlerResponse)
-			root.Bind(webhook.NewV1())
-			s.Run()
-			return nil
-		},
-	}
-)
+		root := s.Group("/")
+		root.Middleware(ghttp.MiddlewareHandlerResponse)
+		root.Bind(webhook.NewV1())
+		s.Run()
+		return nil
+	},
+}

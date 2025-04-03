@@ -7,4 +7,5 @@ package logic
 import (
 	_ "github.com/ledboot/OwlHook/internal/logic/config"
 	_ "github.com/ledboot/OwlHook/internal/logic/notifiers"
+	_ "github.com/ledboot/OwlHook/internal/logic/templates"
 )

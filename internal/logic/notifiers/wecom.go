@@ -1,10 +1,8 @@
 package notifiers
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/ledboot/OwlHook/internal/model"
 )
@@ -29,8 +27,8 @@ type weComMessage struct {
 }
 
 // Send implements NotifierInterface
-func (n *WeComNotifier) Send(message *model.WebhookMessage) error {
-	text := GenerateAlertMessage(message)
+func (n *WeComNotifier) Send(ctx context.Context, payload *model.Payload) error {
+	/* text := GenerateAlertMessage(message)
 
 	wecomMsg := &weComMessage{
 		MsgType: "markdown",
@@ -54,7 +52,7 @@ func (n *WeComNotifier) Send(message *model.WebhookMessage) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("wecom API returned non-200 status code: %d", resp.StatusCode)
-	}
+	} */
 
-	return nil
+	return fmt.Errorf("not implemented")
 }

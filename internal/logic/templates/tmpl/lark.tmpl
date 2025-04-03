@@ -1,0 +1,74 @@
+{{ define "__subject" -}}
+{{- if eq .Status "firing"}} 🔥
+{{- else if eq .Status "resolved" }} ✅
+{{ end }}
+{{- if eq (index .Alerts 0).Labels.severity "ok" }} OK{{ end }}
+{{- if eq (index .Alerts 0).Labels.severity "info" }} INFO{{ end }}
+{{- if eq (index .Alerts 0).Labels.severity "warning" }} WARNING{{ end }}
+{{- if eq (index .Alerts 0).Labels.severity "critical" }} CRITICAL{{ end }}
+{{- ` • ` }}
+{{- if .CommonLabels.alertname_cn }}{{ .CommonLabels.alertname_cn }}{{ else if .CommonLabels.alertname_custom }}{{ .CommonLabels.alertname_custom }}{{ else if .CommonAnnotations.alertname  }}{{ .CommonAnnotations.alertname }}{{ else }}{{ .GroupLabels.alertname }}{{ end }}
+{{ end }}
+
+
+{{ define "__externalURL" -}}
+{{ .ExternalURL }}/#/alerts?receiver={{ .Receiver }}
+{{- end }}
+
+{{ define "__alertinstance" -}}
+{{- if ne .Labels.alertinstance nil -}}{{ .Labels.alertinstance }}
+{{- else if ne .Labels.instance nil -}}{{ .Labels.instance }}
+{{- else if ne .Labels.node nil -}}{{ .Labels.node }}
+{{- else if ne .Labels.nodename nil -}}{{ .Labels.nodename }}
+{{- else if ne .Labels.host nil -}}{{ .Labels.host }}
+{{- else if ne .Labels.hostname nil -}}{{ .Labels.hostname }}
+{{- else if ne .Labels.ip nil -}}{{ .Labels.ip }}
+{{- end -}}
+{{- end }}
+
+{{- define "__alert_list" -}}
+{{ $timeFormat:="2006-01-02 15:04:05" }}
+{{- range . }}
+**Level**:
+{{- if eq .Labels.severity "ok" }}<text_tag color='purple'>OK</text_tag>{{ end -}}
+{{- if eq .Labels.severity "info" }}<text_tag color='lime'>INFO</text_tag>{{ end -}}
+{{- if eq .Labels.severity "warning" }}<text_tag color='yellow'>WARNING</text_tag>{{ end -}}
+{{- if eq .Labels.severity "critical" }}<text_tag color='red'>CRITICAL</text_tag>{{ end }}
+**Instance:**: <text_tag color='purple'>{{ template "__alertinstance" . }}</text_tag>
+**Status**: {{- if eq .Status "firing" }}<text_tag color='carmine'>{{ .Status | toUpper }}</text_tag>{{ else }}<text_tag color='green'>{{ .Status | toUpper }}</text_tag>{{ end }}
+**StartAt**: <text_tag color='neutral'>{{ .StartsAt.Format $timeFormat }}</text_tag>
+**EndAt**: <text_tag color='neutral'>{{ if .EndsAt.After .StartsAt }}{{ .EndsAt.Format $timeFormat }}{{ else }}Not End{{ end }}</text_tag>
+{{- if eq .Status "firing" }}
+**Description**:
+{{- if .Annotations.description_en }}{{ .Annotations.description_en }}{{ else }}{{ .Annotations.description }}{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "prom.title" -}}{{- template "__subject" . -}}{{- end -}}
+{{- define "prom.markdown" -}}
+**🕐 Time:** <font color='grey'>{{ .MessageAt.Format "2006-01-02T15:04:05Z07:00" }}</font>
+</br>
+**📋 Summary:**
+{{ if eq .Status "firing" -}}
+**🚨 Firing [{{ .Alerts|len }}] alerts**
+{{ .CommonAnnotations.summary }}
+{{- end }}
+{{ if eq .Status "resolved" -}}
+**✅ Resolved [{{ .Alerts|len }}] alerts**
+{{ .CommonAnnotations.summary }}
+{{- end -}}
+</br>
+**🔎 Detail:**
+{{- if eq .Status "firing" -}}
+{{- if gt (.Alerts|len ) 0 -}}{{ template "__alert_list" .Alerts }}{{- end -}}
+{{- end -}}
+{{- if eq .Status "resolved" -}}
+{{- if gt (.Alerts|len) 0 -}}{{ template "__alert_list" .Alerts }}{{- end -}}
+{{- end -}}
+
+{{- end -}}
+
+{{ define "prom.text" }}
+{{ template "prom.markdown" . }}
+{{ end }}

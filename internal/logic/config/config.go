@@ -8,8 +8,7 @@ import (
 	"github.com/ledboot/OwlHook/internal/service"
 )
 
-type sConfig struct {
-}
+type sConfig struct{}
 
 func init() {
 	service.RegisterConfig(&sConfig{})

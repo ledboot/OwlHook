@@ -1,0 +1,19 @@
+version: '3'
+name: owlhook
+services:
+  owlhook-api:
+    environment:
+      USERID: ${USERID:-1000}
+      GROUPID: ${GROUPID:-1000}
+      TZ: UTC
+    stop_grace_period: 5m
+    image: docker.io/ledboot/owlhook:a87bb3b
+    container_name: owlhook-api
+    hostname: owlhook-api
+    entrypoint: [ "./main"]
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    expose:
+      - '8000'
+    ports:
+      - '8000:8000'

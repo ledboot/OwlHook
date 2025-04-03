@@ -2,10 +2,12 @@ package notifiers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/ledboot/OwlHook/internal/logic/notifiers/lark"
 	"github.com/ledboot/OwlHook/internal/model"
 )
 
@@ -29,24 +31,26 @@ type larkMessage struct {
 }
 
 // Send implements NotifierInterface
-func (n *LarkNotifier) Send(message *model.WebhookMessage) error {
-	text := GenerateAlertMessage(message)
+func (n *LarkNotifier) Send(ctx context.Context, payload *model.Payload) error {
+	// tmpl, ok := PlatformTemplate[string(consts.PlatformLark)]
+	// if ok {
+	// 	tmpl, err := template.New(templateName).Funcs(defaultFuncs).Parse(tmpl)
+	// 	if err != nil {
+	// 		return fmt.Errorf("failed to parse lark template: %v", err)
+	// 	}
+	// 	tmpl.ExecuteTemplate()
+	// } else {
 
-	larkMsg := &larkMessage{
-		MsgType: "text",
-		Content: struct {
-			Text string `json:"text"`
-		}{
-			Text: text,
-		},
-	}
+	// }
 
-	payload, err := json.Marshal(larkMsg)
+	msg := lark.NewMsgInteractiveFromPayload(payload)
+
+	data, err := json.Marshal(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal lark message: %v", err)
 	}
 
-	resp, err := http.Post(n.Config.WebhookUrl, "application/json", bytes.NewBuffer(payload))
+	resp, err := http.Post(n.Config.WebhookUrl, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		return fmt.Errorf("failed to send lark message: %v", err)
 	}

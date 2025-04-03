@@ -7,10 +7,9 @@ import (
 )
 
 type WebhookReq struct {
-	g.Meta         `path:"/webhook/{platform}" method:"POST" summary:"Webhook" tags:"Webhook"`
-	Platform       consts.Platform `v:"enums" path:"platform"`
-	WebhookMessage *model.WebhookMessage
+	g.Meta   `path:"/webhook/{platform}" method:"POST" summary:"Webhook" tags:"Webhook"`
+	Platform consts.Platform `v:"enums" path:"platform"`
+	*model.WebhookMessage
 }
 
-type WebhookRes struct {
-}
+type WebhookRes struct{}
